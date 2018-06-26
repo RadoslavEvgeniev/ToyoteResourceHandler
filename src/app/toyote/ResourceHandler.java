@@ -47,9 +47,9 @@ public class ResourceHandler implements RequestHandler {
         response.setContent(String.format(RESOURCE_NOT_FOUND_MESSAGE, resourceName).getBytes());
     }
 
-    private void handleResourceRequest(String resourceFolder, String resourceName, HttpResponse response) {
+    private void handleResourceRequest(String resourcesFolder, String resourceName, HttpResponse response) {
         try {
-            Path resourcePath = Paths.get(new URL("file:/" + new File(resourceFolder + File.separator + resourceName).getCanonicalPath()).toURI());
+            Path resourcePath = Paths.get(new URL("file:/" + new File(resourcesFolder + File.separator + resourceName).getCanonicalPath()).toURI());
             byte[] resourceContent = Files.readAllBytes(resourcePath);
 
             response.setStatusCode(HttpStatus.OK);
@@ -57,6 +57,8 @@ public class ResourceHandler implements RequestHandler {
             response.addHeader("Content-Type", Files.probeContentType(resourcePath));
             response.addHeader("Content-Length", resourceContent.length + "");
             response.addHeader("Content-Disposition", "inline");
+
+            response.setContent(resourceContent);
         } catch (IOException | URISyntaxException e) {
             this.notFound(resourceName, response);
         }
@@ -68,11 +70,11 @@ public class ResourceHandler implements RequestHandler {
             HttpRequest request = new HttpRequestImpl(new Reader().readAllLines(inputStream));
             HttpResponse response = new HttpResponseImpl();
 
-            String resourceFolder = this.serverRootFolderPath + "webapps" + File.separator + this.getApplicationName(request.getRequestUrl()) + File.separator + APPLICATION_RESOURCE_FOLDER_NAME;
+            String resourcesFolder = this.serverRootFolderPath + "webapps" + File.separator + this.getApplicationName(request.getRequestUrl()) + File.separator + APPLICATION_RESOURCE_FOLDER_NAME;
 
             String resourceName = this.getResourceName(request.getRequestUrl());
 
-            this.handleResourceRequest(resourceFolder, resourceName, response);
+            this.handleResourceRequest(resourcesFolder, resourceName, response);
 
             new Writer().writeBytes(response.getBytes(), outputStream);
             this.hasIntercepted = true;
