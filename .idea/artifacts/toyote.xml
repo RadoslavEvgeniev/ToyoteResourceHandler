@@ -2,11 +2,7 @@
   <artifact type="jar" build-on-make="true" name="toyote">
     <output-path>$PROJECT_DIR$/out/artifacts/toyote</output-path>
     <root id="archive" name="toyote.jar">
-      <element id="directory" name="app">
-        <element id="directory" name="toyote">
-          <element id="dir-copy" path="$PROJECT_DIR$/src/app/toyote" />
-        </element>
-      </element>
+      <element id="module-output" name="Toyote" />
     </root>
   </artifact>
 </component>
